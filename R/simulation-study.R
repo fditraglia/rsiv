@@ -18,8 +18,8 @@ draw_sims <- function(G=235,N_target=30000) {
 
   # sd_theta <- diag(c(kappa = 0.1, alpha = 0.025, beta = 0.25, gamma = 0.05, delta = 0.05))
   # sd_epsilon <- diag(c(kappa = 2, alpha = 0.1, beta = 1, gamma = 0.2, delta = 0.1))
-  sd_theta <- diag(c(kappa = 0.1, alpha = 0.025, beta = 0.5, gamma = 0.2, delta = 0.3))
-  sd_epsilon <- diag(c(kappa = 0.3, alpha = 0.1, beta = 1, gamma = 0.1, delta = 0.05))
+  sd_theta <- diag(c(kappa = 1, alpha = 0.025, beta = 0.5, gamma = 0.2, delta = 0.05))
+  sd_epsilon <- diag(c(kappa = 2, alpha = 0.1, beta = 1, gamma = 0.1, delta = 0.1))
 
   R_theta <- diag(length(m))
   R_theta[1, 2:5] <- R_theta[2:5, 1] <- r_theta
