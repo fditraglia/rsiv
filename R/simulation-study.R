@@ -10,15 +10,15 @@ draw_sims <- function(G=235,N_target=30000) {
   saturation <- rep(c(0, 0.25, 0.5, 0.75, 1), each = G / 5)
   noffers <- floor(saturation * N_g)
 
-  m <- c(kappa = 0, alpha = 0.2, beta = 1, gamma = -0.2, delta = -0.1)
+  m <- c(kappa = -0.1, alpha = 0.2, beta = 1, gamma = -0.2, delta = -0.1)
   #r_theta <- c(-0.15, 0.3, 0.2, 0.6)
   #r_epsilon <- c(-0.3, 0.3, 0.2, -0.3)
-  r_theta <- c(0, 0.3, 0.5, -0.1) # This is the correlation between the coefficients
-  r_epsilon <- c(0, 0.6, 0.3, -0.1) # This is the correlation between the epsilons?
+  r_theta <- c(0, 0.3, 0.5, 0.1) # This is the correlation between the coefficients
+  r_epsilon <- c(0, 0.6, 0.3, 0.1) # This is the correlation between the epsilons?
 
   # sd_theta <- diag(c(kappa = 0.1, alpha = 0.025, beta = 0.25, gamma = 0.05, delta = 0.05))
   # sd_epsilon <- diag(c(kappa = 2, alpha = 0.1, beta = 1, gamma = 0.2, delta = 0.1))
-  sd_theta <- diag(c(kappa = 0.1, alpha = 0.025, beta = 0.5, gamma = 0.2, delta = 0.3))
+  sd_theta <- diag(c(kappa = 0.1, alpha = 0.025, beta = 0.5, gamma = 0.2, delta = 0.1))
   sd_epsilon <- diag(c(kappa = 0.3, alpha = 0.1, beta = 1, gamma = 0.1, delta = 0.05))
 
   R_theta <- diag(length(m))
@@ -56,11 +56,16 @@ draw_sims <- function(G=235,N_target=30000) {
   # The following adds a simple strategic interaction:
   #dat <- dat %>% mutate(d = z * (kappa + (saturation == 0.25) * 0.5 > 0))
 
-  dbar <- dat %>% group_by(city) %>% dplyr::summarize(dbar = mean(d))
-  sc <- dat %>% group_by(city) %>% dplyr::summarize(sc = mean(kappa > 0)) # Is this is the proportion of compliers?
-  dat <- full_join(dat, dbar, by = 'city')
-  dat <- full_join(dat, sc, by = 'city')
-  dat <- dat %>% mutate(y = alpha + beta * d + gamma * dbar + delta * d * dbar) # Add the outcomes data
+  #dbar <- dat %>% group_by(city) %>% dplyr::summarize(dbar = mean(d))
+  dat <- dat %>% group_by(city) %>% mutate(dbar = mean(d),
+                                           zbar = mean(z),
+                                           sc = mean(kappa > 0),
+                                           n_g = n())
+  dat <- dat %>% mutate(dbar_loo = (dbar*n_g - d)/(n_g-1))
+  #sc <- dat %>% group_by(city) %>% dplyr::summarize(sc = mean(kappa > 0)) # Is this is the proportion of compliers?
+  #dat <- full_join(dat, dbar, by = 'city')
+  #dat <- full_join(dat, sc, by = 'city')
+  dat <- dat %>% mutate(y = alpha + beta * d + gamma * dbar_loo + delta * d * dbar_loo) # Add the outcomes data
   return(dat)
 }
 
