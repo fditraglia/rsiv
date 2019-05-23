@@ -1,6 +1,3 @@
-## Remove items from workspace
-rm(list = ls())
-
 library(MASS)
 library(dplyr)
 library(tibble)
